@@ -1,9 +1,8 @@
 "use client";
 
 import { Button, Callout, TextField } from "@radix-ui/themes";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import "easymde/dist/easymde.min.css";
-import Error from "next/error";
 import { useRouter } from "next/navigation";
 import { SetStateAction, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -39,13 +38,15 @@ const NewIssuePage = () => {
             router.push("/issues");
           } catch (error) {
             if (axios.isAxiosError(error)) {
-              error.response?.data.map((e) => {
-                if (e.path[0] == "title") {
-                  setTitleError(e.message);
-                } else if (e.path[0] == "description") {
-                  setDescriptionError(e.message);
+              error.response?.data.map(
+                (e: { path: string[]; message: string }) => {
+                  if (e.path[0] == "title") {
+                    setTitleError(e.message);
+                  } else if (e.path[0] == "description") {
+                    setDescriptionError(e.message);
+                  }
                 }
-              });
+              );
             } else {
               setError("Unexpected error occurred.");
             }
