@@ -1,24 +1,29 @@
 "use client";
 
-import { Button, Callout, TextField } from "@radix-ui/themes";
+import { createIssueSchema } from "@/app/validationSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Callout, Text, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { MdDangerous } from "react-icons/md";
 import SimpleMDE from "react-simplemde-editor";
+import { z } from "zod";
 
-interface IssueForm {
-  title: string;
-  description: string;
-}
+type IssueForm = z.infer<typeof createIssueSchema>;
 
 const NewIssuePage = () => {
   const router = useRouter();
-  const { register, control, handleSubmit } = useForm<IssueForm>();
-  const [titleError, setTitleError] = useState("");
-  const [descriptionError, setDescriptionError] = useState("");
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueForm>({
+    resolver: zodResolver(createIssueSchema),
+  });
   const [error, setError] = useState("");
   return (
     <div className="max-w-xl">
@@ -37,32 +42,15 @@ const NewIssuePage = () => {
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error) {
-            if (axios.isAxiosError(error)) {
-              error.response?.data.map(
-                (e: { path: string[]; message: string }) => {
-                  if (e.path[0] == "title") {
-                    setTitleError(e.message);
-                  } else if (e.path[0] == "description") {
-                    setDescriptionError(e.message);
-                  }
-                }
-              );
-            } else {
-              setError("Unexpected error occurred.");
-            }
+            setError("Unexpected error occurred.");
           }
         })}
       >
         <TextField.Root size="2" placeholder="Title" {...register("title")} />
-        {titleError && (
-          <span>
-            <Callout.Root color="red" className="mt-2">
-              <Callout.Icon>
-                <MdDangerous />
-              </Callout.Icon>
-              <Callout.Text>{titleError}</Callout.Text>
-            </Callout.Root>
-          </span>
+        {errors.title && (
+          <Text as="p" color="red">
+            {errors.title.message}
+          </Text>
         )}
         <Controller
           name="description"
@@ -71,13 +59,10 @@ const NewIssuePage = () => {
             <SimpleMDE placeholder="Description" {...field} />
           )}
         />
-        {descriptionError && (
-          <Callout.Root color="red">
-            <Callout.Icon>
-              <MdDangerous />
-            </Callout.Icon>
-            <Callout.Text>{descriptionError}</Callout.Text>
-          </Callout.Root>
+        {errors.description && (
+          <Text as="p" color="red">
+            {errors.description.message}
+          </Text>
         )}
 
         <Button>Submit new Issue</Button>
