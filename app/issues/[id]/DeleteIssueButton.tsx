@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "@/app/components/Link";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { AlertDialog, Button, Flex } from "@radix-ui/themes";
+import { AlertDialog, Button, Flex, Spinner } from "@radix-ui/themes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,14 +9,18 @@ import { useState } from "react";
 const DeleteIssueButton = ({ id }: { id: number }) => {
   const router = useRouter();
   const [error, setError] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const deleteIssue = async () => {
     try {
+      setIsDeleting(true);
       await axios.delete("/api/issues/" + id);
       router.push("/issues");
       router.refresh();
+      setIsDeleting(false);
     } catch (error) {
       setError(true);
+      setIsDeleting(false);
     }
   };
 
@@ -25,15 +28,16 @@ const DeleteIssueButton = ({ id }: { id: number }) => {
     <>
       <AlertDialog.Root>
         <AlertDialog.Trigger>
-          <Button color="red">
+          <Button disabled={isDeleting} color="red">
             <TrashIcon />
             Delete issue
+            {isDeleting && <Spinner />}
           </Button>
         </AlertDialog.Trigger>
         <AlertDialog.Content>
           <AlertDialog.Title>Confirm Deletion</AlertDialog.Title>
           <AlertDialog.Description>
-            Are you sure you want to delete this issue? This action ca not be
+            Are you sure you want to delete this issue? This action can not be
             reverted!
           </AlertDialog.Description>
           <Flex mt="4" gap="3">
