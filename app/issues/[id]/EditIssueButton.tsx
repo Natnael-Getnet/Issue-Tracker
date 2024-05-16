@@ -1,9 +1,8 @@
 import Link from "@/app/components/Link";
 import { Pencil2Icon } from "@radix-ui/react-icons";
 import { Button } from "@radix-ui/themes";
-import React from "react";
 
-const IssueButton = ({ id }: { id: number }) => {
+const EditIssueButton = ({ id }: { id: number }) => {
   return (
     <Button>
       <Pencil2Icon />
@@ -12,4 +11,4 @@ const IssueButton = ({ id }: { id: number }) => {
   );
 };
 
-export default IssueButton;
+export default EditIssueButton;
