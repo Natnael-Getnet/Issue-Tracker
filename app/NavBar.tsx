@@ -1,34 +1,12 @@
 "use client";
 
-import {
-  Avatar,
-  Box,
-  Container,
-  DropdownMenu,
-  Flex,
-  Text,
-} from "@radix-ui/themes";
-import { useSession } from "next-auth/react";
+import { Container, Flex } from "@radix-ui/themes";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
 import { FaBug } from "react-icons/fa6";
+import AuthStatus from "./AuthStatus";
+import NavLinks from "./NavLinks";
 
 const NavBar = () => {
-  const currentPath = usePathname();
-  const { status, data: session } = useSession();
-
-  const links = [
-    {
-      label: "Dashboard",
-      href: "/",
-    },
-    {
-      label: "Issues",
-      href: "/issues",
-    },
-  ];
-
   return (
     <nav className="border-b mb-5 px-5 py-3">
       <Container>
@@ -37,49 +15,9 @@ const NavBar = () => {
             <Link href="/">
               <FaBug />
             </Link>
-            <ul className="flex  space-x-6">
-              {links.map((link, index) => (
-                <li
-                  key={index}
-                  className={`${
-                    link.href === currentPath
-                      ? "text-zinc-900"
-                      : "text-zinc-500"
-                  } hover:text-zinc-800 transition-colors`}
-                >
-                  <Link href={link.href}>{link.label}</Link>
-                </li>
-              ))}
-            </ul>
+            <NavLinks />
           </Flex>
-
-          <Box>
-            {status === "authenticated" && (
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <Avatar
-                    size="2"
-                    radius="full"
-                    src={session.user!.image!}
-                    fallback="?"
-                    className="cursor-pointer"
-                  />
-                </DropdownMenu.Trigger>
-
-                <DropdownMenu.Content sideOffset={15}>
-                  <DropdownMenu.Label>
-                    <Text size="2">{session.user?.email}</Text>
-                  </DropdownMenu.Label>
-                  <DropdownMenu.Item>
-                    <Link href="/api/auth/signout">Logout</Link>
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            )}
-            {status === "unauthenticated" && (
-              <Link href="/api/auth/signin">Login</Link>
-            )}
-          </Box>
+          <AuthStatus />
         </Flex>
       </Container>
     </nav>
