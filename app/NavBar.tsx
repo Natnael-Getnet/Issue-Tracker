@@ -57,15 +57,13 @@ const NavBar = () => {
             {status === "authenticated" && (
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
-                  <Text>
-                    <Avatar
-                      size="2"
-                      radius="full"
-                      src={session.user!.image!}
-                      fallback="?"
-                      className="cursor-pointer"
-                    />
-                  </Text>
+                  <Avatar
+                    size="2"
+                    radius="full"
+                    src={session.user!.image!}
+                    fallback="?"
+                    className="cursor-pointer"
+                  />
                 </DropdownMenu.Trigger>
 
                 <DropdownMenu.Content sideOffset={15}>
