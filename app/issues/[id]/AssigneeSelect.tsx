@@ -1,12 +1,12 @@
 "use client";
 
-import { User } from "@prisma/client";
+import { Issue, User } from "@prisma/client";
 import { Select, Skeleton } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const AssigneeSelect = () => {
+const AssigneeSelect = ({ issue }: { issue: Issue }) => {
   const {
     data: users,
     isLoading,
@@ -34,11 +34,19 @@ const AssigneeSelect = () => {
   if (isError) return <div>Error: {error.message}</div>;
 
   return (
-    <Select.Root>
+    <Select.Root
+      defaultValue={issue.user_id || "0"}
+      onValueChange={(user_id) =>
+        axios.patch("/api/issues/" + issue.id, {
+          user_id: user_id === "0" ? null : user_id,
+        })
+      }
+    >
       <Select.Trigger placeholder="Assign ..." />
       <Select.Content>
         <Select.Group>
           <Select.Label>Suggestions</Select.Label>
+          <Select.Item value="0">Unassign</Select.Item>
           {users?.map((user) => (
             <Select.Item key={user.id} value={user.id}>
               {user.name}
