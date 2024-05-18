@@ -20,6 +20,8 @@ model Issue {
   status      Status   @default(OPEN)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+  user_id     String?  @db.VarChar(255)
+  assignee_to User?    @relation(fields: [user_id], references: [id])
 }
 
 enum Status {
@@ -41,6 +43,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Issue     Issue[]
 }
 
 model Account {
