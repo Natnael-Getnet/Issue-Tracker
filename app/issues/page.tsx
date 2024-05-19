@@ -8,6 +8,7 @@ import IssuesToolBar from "./IssuesToolBar";
 import { stat } from "fs";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
 import Pagination from "../components/Pagination";
+import { Metadata } from "next";
 
 interface Props {
   searchParams: { status: Status; orderBy: keyof Issue; page: string };
@@ -104,5 +105,10 @@ const IssuesPage = async ({ searchParams }: Props) => {
 };
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Issue Tracker: Issue list",
+  description: "View all project issues",
+};
 
 export default IssuesPage;
